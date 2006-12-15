@@ -1073,10 +1073,6 @@ static PyMethodDef cjson_methods[] = {
     PyDoc_STR("encode(object) -> generate JSON representation of object")},
     {"decode", (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
     PyDoc_STR("decode(string) -> parse JSON representation into python objects")},
-    {"dumps",  (PyCFunction)JSON_encode,  METH_O,
-    PyDoc_STR("dumps(object) -> generate JSON representation of object")},
-    {"loads",  (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
-    PyDoc_STR("loads(string) -> parse JSON representation into python objects")},
     {NULL, NULL}   // sentinel
 };
 
