@@ -1,0 +1,17 @@
+Source: python-cjson
+Section: python
+Priority: optional
+Maintainer: Dan Pascu <dan@ag-projects.com>
+Build-Depends: debhelper (>= 5.0.42), python-all-dev (>= 2.4.4-1), python-support (>= 0.5.5)
+Standards-Version: 3.7.2
+
+Package: python-cjson
+Architecture: any
+Depends: ${python:Depends}, ${shlibs:Depends}
+Provides: ${python:Provides}
+Description: Very fast JSON encoder/decoder for Python
+ This module provides a very fast implementation of a JSON encoder/decoder
+ for the python language.
+ .
+ The module is written in C and it is up to 250 times faster when compared to
+ the other python JSON implementations which are written directly in python.
