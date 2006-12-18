@@ -9,4 +9,8 @@
 (^|/)core(\.[0-9]+|)$
 \.(pyc|pyo|o|so|orig|bak|BAK|prof|wpu|cvsignore)$
 (^|/)(test|timer).*\.py$
-(^|/)build($|/)
+(^|/)(build|dist)($|/)
+(^|/)debian/python-cjson.*($|/)
+(^|/)debian/files$
+^python-build-stamp-.*$
+^MANIFEST$

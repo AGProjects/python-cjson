@@ -1,0 +1,4 @@
+recursive-include debian  changelog compat control copyright pycompat rules
+include MANIFEST.in
+include build_inplace
+include jsontest.py
