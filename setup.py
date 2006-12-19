@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import sys
 from distutils.core import setup, Extension
 
 setup(name         = "python-cjson",
