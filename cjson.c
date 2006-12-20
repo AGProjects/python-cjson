@@ -41,11 +41,21 @@ static PyObject *JSON_Error;
 static PyObject *JSON_EncodeError;
 static PyObject *JSON_DecodeError;
 
+
 #define True  1
 #define False 0
 
-#define max(x, y) ((x) > (y) ? (x) : (y))
-#define min(x, y) ((x) < (y) ? (x) : (y))
+#ifndef INFINITY
+# define INFINITY HUGE_VAL
+#endif
+
+#ifndef NAN
+# define NAN (HUGE_VAL - HUGE_VAL)
+#endif
+
+#ifndef Py_IS_NAN
+# define Py_IS_NAN(X) ((X) != (X))
+#endif
 
 #define skipSpaces(d) while(*((d)->ptr) && isspace(*((d)->ptr))) (d)->ptr++
 
