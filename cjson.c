@@ -508,9 +508,7 @@ decode_json(JSONData *jsondata)
  *
  * - it always quotes the output using double quotes.
  * - it also quotes \b and \f
- * - it replaces any non ASCII character hh with \u00hh (this is incorrect
- *   but the same thing is done by simplejson and we do this to be able to
- *   test compatibility).
+ * - it replaces any non ASCII character hh with \u00hh instead of \xhh
  */
 static PyObject*
 encode_string(PyObject *string)
