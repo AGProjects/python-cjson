@@ -2,12 +2,14 @@
 
 from distutils.core import setup, Extension
 
+__version__ = "1.0.1"
+
 setup(name         = "python-cjson",
-      version      = "1.0.0",
+      version      = __version__,
       author       = "Dan Pascu",
       author_email = "dan@ag-projects.com",
       url          = "http://ag-projects.com/",
-      download_url = "http://cheeseshop.python.org/pypi/python-cjson/1.0.0",
+      download_url = "http://cheeseshop.python.org/pypi/python-cjson/%s" % __version__,
       description  = "Fast JSON encoder/decoder for Python",
       long_description = open('README', 'r').read(),
       license      = "LGPL",

@@ -1,3 +1,11 @@
+python-cjson (1.0.1) unstable; urgency=low
+
+  * Clean some more leftovers on debuild clean.
+  * Removed unused import in setup.py
+  * Fixed function comment.
+
+ -- Dan Pascu <dan@ag-projects.com>  Wed, 20 Dec 2006 02:19:08 +0200
+
 python-cjson (1.0.0) unstable; urgency=medium
 
   * Initial release.
