@@ -1,3 +1,13 @@
+python-cjson (1.0.2) unstable; urgency=low
+
+  * Define INFINITY and NAN if missing as they are not available on all
+    platforms.
+  * Define Py_IS_NAN if missing as python2.3 doesn't have it.
+  * Removed min and max macros as they were no used.
+  * Remove cjson.so and the build directory on debuild clean.
+
+ -- Dan Pascu <dan@ag-projects.com>  Wed, 20 Dec 2006 14:45:06 +0200
+
 python-cjson (1.0.1) unstable; urgency=low
 
   * Clean some more leftovers on debuild clean.
