@@ -6,4 +6,4 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
 clean::
-	-rm -rf dist MANIFEST
+	-rm -rf dist MANIFEST cjson.so
