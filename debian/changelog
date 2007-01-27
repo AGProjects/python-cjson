@@ -1,3 +1,10 @@
+python-cjson (1.0.3) unstable; urgency=low
+
+  * Updated the function docstrings to include information about the
+    available optional arguments and their meaning.
+
+ -- Dan Pascu <dan@ag-projects.com>  Sat, 27 Jan 2007 07:25:39 +0200
+
 python-cjson (1.0.2) unstable; urgency=low
 
   * Define INFINITY and NAN if missing as they are not available on all
