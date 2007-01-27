@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Dan Pascu
+ * Copyright (C) 2006-2007 Dan Pascu
  * Author: Dan Pascu <dan@ag-projects.com>
  *
  * Fast JSON encoder/decoder implementation for Python
@@ -1078,10 +1078,17 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
 
 static PyMethodDef cjson_methods[] = {
     {"encode", (PyCFunction)JSON_encode,  METH_O,
-    PyDoc_STR("encode(object) -> generate JSON representation of object")},
+    PyDoc_STR("encode(object) -> generate the JSON representation for object.")},
+
     {"decode", (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
-    PyDoc_STR("decode(string) -> parse JSON representation into python objects")},
-    {NULL, NULL}   // sentinel
+    PyDoc_STR("decode(string, all_unicode=False) -> parse the JSON representation into\n"
+              "python objects. The optional argument `all_unicode', specifies how to\n"
+              "convert the strings in the JSON representation into python objects.\n"
+              "If it is False (default), it will return strings everywhere possible\n"
+              "and unicode objects only where necessary, else it will return unicode\n"
+              "objects everywhere (this is slower).")},
+
+    {NULL, NULL}  // sentinel
 };
 
 PyDoc_STRVAR(module_doc,
