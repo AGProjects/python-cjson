@@ -2,7 +2,7 @@
 
 from distutils.core import setup, Extension
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 setup(name         = "python-cjson",
       version      = __version__,
