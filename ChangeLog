@@ -1,0 +1,27 @@
+Changes in version 1.0.4
+------------------------
+
+  * Added licensing information.
+
+Changes in version 1.0.3
+------------------------
+
+  * Updated the function docstrings to include information about the
+    available optional arguments and their meaning.
+
+Changes in version 1.0.2
+------------------------
+
+  * Define INFINITY and NAN if missing as they are not available on all
+    platforms.
+  * Define Py_IS_NAN if missing as python2.3 doesn't have it.
+  * Removed min and max macros as they were no used.
+  * Remove cjson.so and the build directory on debuild clean.
+
+Changes in version 1.0.1
+------------------------
+
+  * Clean some more leftovers on debuild clean.
+  * Removed unused import in setup.py
+  * Fixed function comment.
+

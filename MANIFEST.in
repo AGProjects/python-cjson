@@ -1,2 +1,2 @@
 recursive-include debian  changelog compat control copyright pycompat rules
-include LICENSE Changelog MANIFEST.in build_inplace jsontest.py
+include LICENSE ChangeLog MANIFEST.in build_inplace jsontest.py
