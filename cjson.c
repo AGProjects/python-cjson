@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 Dan Pascu
+ * Copyright (C) 2006-2007 Dan Pascu. See LICENSE for details.
  * Author: Dan Pascu <dan@ag-projects.com>
  *
  * Fast JSON encoder/decoder implementation for Python
