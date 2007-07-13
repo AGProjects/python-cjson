@@ -1058,17 +1058,18 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
 
     object = decode_json(&jsondata);
 
-    Py_DECREF(str);
-
     if (object != NULL) {
         skipSpaces(&jsondata);
         if (jsondata.ptr < jsondata.end) {
-            Py_DECREF(object);
             PyErr_Format(JSON_DecodeError, "extra data after JSON description"
                         " at position %d", jsondata.ptr-jsondata.str);
+            Py_DECREF(str);
+            Py_DECREF(object);
             return NULL;
         }
     }
+
+    Py_DECREF(str);
 
     return object;
 }

@@ -2,6 +2,8 @@ Changes in version 1.0.4
 ------------------------
 
   * Added licensing information.
+  * Fixed issue with decrementing a string reference too early
+    (Edouard Hinard <edouard.hinard@orange-ftgroup.com>).
 
 Changes in version 1.0.3
 ------------------------
