@@ -310,7 +310,6 @@ decode_number(JSONData *jsondata)
     if (object == NULL) {
         PyErr_Format(JSON_DecodeError, "invalid number starting at position "
                      SSIZE_T_F, (Py_ssize_t)(jsondata->ptr - jsondata->str));
-        puts(ptr);
     } else {
         jsondata->ptr = ptr;
     }
