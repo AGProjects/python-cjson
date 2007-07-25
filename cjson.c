@@ -6,13 +6,11 @@
  *
  */
 
-
 #include <Python.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
-
 
 typedef struct JSONData {
     char *str; // the actual json string
@@ -20,7 +18,6 @@ typedef struct JSONData {
     char *ptr; // pointer to the current parsing position
     int  all_unicode; // make all output strings unicode if true
 } JSONData;
-
 
 static PyObject* encode_object(PyObject *object);
 static PyObject* encode_string(PyObject *object);
@@ -58,15 +55,15 @@ typedef int Py_ssize_t;
 #define False 0
 
 #ifndef INFINITY
-# define INFINITY HUGE_VAL
+#define INFINITY HUGE_VAL
 #endif
 
 #ifndef NAN
-# define NAN (HUGE_VAL - HUGE_VAL)
+#define NAN (HUGE_VAL - HUGE_VAL)
 #endif
 
 #ifndef Py_IS_NAN
-# define Py_IS_NAN(X) ((X) != (X))
+#define Py_IS_NAN(X) ((X) != (X))
 #endif
 
 #define skipSpaces(d) while(*((d)->ptr) && isspace(*((d)->ptr))) (d)->ptr++
