@@ -8,6 +8,8 @@ Changes in version 1.0.4
     patch by David Rushby <davidrushby@yahoo.com>).
   * Fixed issue with not returning NULL after setting the OverflowError
     when encoded strings would be too big.
+  * Fixed 2 potential buffer overflow errors when encoding string/unicode
+    (thanks to Ofer Faigon <ofer3@bitformation.com> for pointing them out).
 
 Changes in version 1.0.3
 ------------------------

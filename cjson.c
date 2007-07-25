@@ -542,7 +542,7 @@ encode_string(PyObject *string)
     size_t newsize = 2 + 6 * op->ob_size;
     PyObject *v;
 
-    if (newsize > PY_SSIZE_T_MAX) {
+    if (op->ob_size > (PY_SSIZE_T_MAX-2)/6) {
         PyErr_SetString(PyExc_OverflowError,
                         "string is too large to make repr");
         return NULL;
@@ -616,6 +616,12 @@ encode_unicode(PyObject *unicode)
 
     s = PyUnicode_AS_UNICODE(unicode);
     size = PyUnicode_GET_SIZE(unicode);
+
+    if (size > (PY_SSIZE_T_MAX-2-1)/6) {
+        PyErr_SetString(PyExc_OverflowError,
+                        "unicode object is too large to make repr");
+        return NULL;
+    }
 
     repr = PyString_FromStringAndSize(NULL, 2 + 6*size + 1);
     if (repr == NULL)
