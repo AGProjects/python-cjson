@@ -1,3 +1,18 @@
+python-cjson (1.0.4) unstable; urgency=low
+
+  * Added licensing information.
+  * Fixed issue with decrementing a string reference too early
+    (Edouard Hinard <edouard.hinard@orange-ftgroup.com>).
+  * Fixed 64-bit portability problems (based on a modified version of a
+    patch by David Rushby <davidrushby@yahoo.com>).
+  * Fixed issue with not returning NULL after setting the OverflowError
+    when encoded strings would be too big.
+  * Fixed 2 potential buffer overflow errors when encoding string/unicode
+    (thanks to Ofer Faigon <ofer3@bitformation.com> for pointing them out).
+  * About 10% speed improvement when encoding/decoding string/unicode.
+
+ -- Dan Pascu <dan@ag-projects.com>  Wed, 25 Jul 2007 17:13:34 +0300
+
 python-cjson (1.0.3) unstable; urgency=low
 
   * Updated the function docstrings to include information about the
