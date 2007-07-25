@@ -6,6 +6,8 @@ Changes in version 1.0.4
     (Edouard Hinard <edouard.hinard@orange-ftgroup.com>).
   * Fixed 64-bit portability problems (based on a modified version of a
     patch by David Rushby <davidrushby@yahoo.com>).
+  * Fixed issue with not returning NULL after setting the OverflowError
+    when encoded strings would be too big.
 
 Changes in version 1.0.3
 ------------------------

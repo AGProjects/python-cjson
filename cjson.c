@@ -545,6 +545,7 @@ encode_string(PyObject *string)
     if (newsize > PY_SSIZE_T_MAX) {
         PyErr_SetString(PyExc_OverflowError,
                         "string is too large to make repr");
+        return NULL;
     }
     v = PyString_FromStringAndSize((char *)NULL, newsize);
     if (v == NULL) {
