@@ -10,6 +10,7 @@ Changes in version 1.0.4
     when encoded strings would be too big.
   * Fixed 2 potential buffer overflow errors when encoding string/unicode
     (thanks to Ofer Faigon <ofer3@bitformation.com> for pointing them out).
+  * About 10% speed improvement when encoding/decoding string/unicode.
 
 Changes in version 1.0.3
 ------------------------
