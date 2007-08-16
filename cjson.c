@@ -1129,6 +1129,9 @@ initcjson(void)
     /* Create the module and add the functions */
     m = Py_InitModule3("cjson", cjson_methods, module_doc);
 
+    if (m == NULL)
+        return;
+
     /* Add some symbolic constants to the module */
     if (JSON_Error == NULL) {
         JSON_Error = PyErr_NewException("cjson.Error", NULL, NULL);
