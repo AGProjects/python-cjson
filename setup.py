@@ -4,6 +4,8 @@ from distutils.core import setup, Extension
 
 __version__ = "1.0.4"
 
+macros = [('MODULE_VERSION', '"%s"' % __version__)]
+
 setup(name         = "python-cjson",
       version      = __version__,
       author       = "Dan Pascu",
@@ -22,4 +24,7 @@ setup(name         = "python-cjson",
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules"
       ],
-      ext_modules  = [Extension(name='cjson', sources=['cjson.c'])])
+      ext_modules  = [
+        Extension(name='cjson', sources=['cjson.c'], define_macros=macros)
+      ]
+)

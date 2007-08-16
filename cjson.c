@@ -1147,6 +1147,10 @@ initcjson(void)
     if (JSON_DecodeError == NULL)
         return;
     PyModule_AddObject(m, "DecodeError", JSON_DecodeError);
+
+    // Module version (the MODULE_VERSION macro is defined by setup.py)
+    PyModule_AddStringConstant(m, "__version__", MODULE_VERSION);
+
 }
 
 
