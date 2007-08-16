@@ -1134,18 +1134,19 @@ initcjson(void)
     JSON_Error = PyErr_NewException("cjson.Error", NULL, NULL);
     if (JSON_Error == NULL)
         return;
+    Py_INCREF(JSON_Error);
     PyModule_AddObject(m, "Error", JSON_Error);
 
-    JSON_EncodeError = PyErr_NewException("cjson.EncodeError",
-                                          JSON_Error, NULL);
+    JSON_EncodeError = PyErr_NewException("cjson.EncodeError", JSON_Error, NULL);
     if (JSON_EncodeError == NULL)
         return;
+    Py_INCREF(JSON_EncodeError);
     PyModule_AddObject(m, "EncodeError", JSON_EncodeError);
 
-    JSON_DecodeError = PyErr_NewException("cjson.DecodeError",
-                                          JSON_Error, NULL);
+    JSON_DecodeError = PyErr_NewException("cjson.DecodeError", JSON_Error, NULL);
     if (JSON_DecodeError == NULL)
         return;
+    Py_INCREF(JSON_DecodeError);
     PyModule_AddObject(m, "DecodeError", JSON_DecodeError);
 
     // Module version (the MODULE_VERSION macro is defined by setup.py)
