@@ -1126,36 +1126,27 @@ initcjson(void)
 {
     PyObject *m;
 
-    /* Create the module and add the functions */
     m = Py_InitModule3("cjson", cjson_methods, module_doc);
 
     if (m == NULL)
         return;
 
-    /* Add some symbolic constants to the module */
-    if (JSON_Error == NULL) {
-        JSON_Error = PyErr_NewException("cjson.Error", NULL, NULL);
-        if (JSON_Error == NULL)
-            return;
-        //Py_INCREF(JSON_Error);
-        PyModule_AddObject(m, "Error", JSON_Error);
-    }
-    if (JSON_EncodeError == NULL) {
-        JSON_EncodeError = PyErr_NewException("cjson.EncodeError",
-                                              JSON_Error, NULL);
-        if (JSON_EncodeError == NULL)
-            return;
-        //Py_INCREF(JSON_EncodeError);
-        PyModule_AddObject(m, "EncodeError", JSON_EncodeError);
-    }
-    if (JSON_DecodeError == NULL) {
-        JSON_DecodeError = PyErr_NewException("cjson.DecodeError",
-                                              JSON_Error, NULL);
-        if (JSON_DecodeError == NULL)
-            return;
-        //Py_INCREF(JSON_DecodeError);
-        PyModule_AddObject(m, "DecodeError", JSON_DecodeError);
-    }
+    JSON_Error = PyErr_NewException("cjson.Error", NULL, NULL);
+    if (JSON_Error == NULL)
+        return;
+    PyModule_AddObject(m, "Error", JSON_Error);
+
+    JSON_EncodeError = PyErr_NewException("cjson.EncodeError",
+                                          JSON_Error, NULL);
+    if (JSON_EncodeError == NULL)
+        return;
+    PyModule_AddObject(m, "EncodeError", JSON_EncodeError);
+
+    JSON_DecodeError = PyErr_NewException("cjson.DecodeError",
+                                          JSON_Error, NULL);
+    if (JSON_DecodeError == NULL)
+        return;
+    PyModule_AddObject(m, "DecodeError", JSON_DecodeError);
 }
 
 
