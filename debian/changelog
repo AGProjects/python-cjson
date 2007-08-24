@@ -1,3 +1,12 @@
+python-cjson (1.0.5) unstable; urgency=low
+
+  * Check if module initialization failed.
+  * Removed useless checks on module initialization.
+  * Added __version__ attribute to the cjson module.
+  * Call Py_INCREF before calling PyModule_AddObject.
+
+ -- Dan Pascu <dan@ag-projects.com>  Fri, 24 Aug 2007 15:14:07 +0300
+
 python-cjson (1.0.4) unstable; urgency=low
 
   * Added licensing information.

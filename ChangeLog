@@ -1,3 +1,11 @@
+Changes in version 1.0.5
+------------------------
+
+  * Check if module initialization failed.
+  * Removed useless checks on module initialization.
+  * Added __version__ attribute to the cjson module.
+  * Call Py_INCREF before calling PyModule_AddObject.
+
 Changes in version 1.0.4
 ------------------------
 
