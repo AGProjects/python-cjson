@@ -1019,7 +1019,7 @@ encode_object(PyObject *object)
                 return PyString_FromString("-Infinity");
             }
         } else {
-            return PyObject_Str(object);
+            return PyObject_Repr(object);
         }
     } else if (PyInt_Check(object) || PyLong_Check(object)) {
         return PyObject_Str(object);
