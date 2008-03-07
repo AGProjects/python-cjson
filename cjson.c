@@ -41,6 +41,9 @@ static PyObject *JSON_EncodeError;
 static PyObject *JSON_DecodeError;
 
 
+#define _string(x) #x
+#define string(x) _string(x)
+
 #if PY_VERSION_HEX < 0x02050000
 typedef int Py_ssize_t;
 #define PY_SSIZE_T_MAX INT_MAX
@@ -1150,7 +1153,7 @@ initcjson(void)
     PyModule_AddObject(m, "DecodeError", JSON_DecodeError);
 
     // Module version (the MODULE_VERSION macro is defined by setup.py)
-    PyModule_AddStringConstant(m, "__version__", MODULE_VERSION);
+    PyModule_AddStringConstant(m, "__version__", string(MODULE_VERSION));
 
 }
 

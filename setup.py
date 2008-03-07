@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 
 __version__ = "1.0.5"
 
-macros = [('MODULE_VERSION', '"%s"' % __version__)]
+macros = [('MODULE_VERSION', __version__)]
 
 setup(name         = "python-cjson",
       version      = __version__,
