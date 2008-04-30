@@ -755,7 +755,7 @@ encode_unicode(PyObject *unicode)
  * Python's tupleobject.c with the following differences:
  *
  * - it uses encode_object() to get the object's JSON reprezentation.
- * - it uses [] as decorations isntead of () (to masquerade as a JSON array).
+ * - it uses [] as decorations instead of () (to masquerade as a JSON array).
  */
 
 static PyObject*
