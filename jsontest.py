@@ -197,7 +197,8 @@ class JsonTest(unittest.TestCase):
         self.assertEqual('{"age":44,"name":"Patrick"}', _removeWhitespace(s))
 
     def testWriteFloat(self):
-        self.assertEqual("3.44556677", _removeWhitespace(cjson.encode(3.44556677)))
+        n = 3.44556677
+        self.assertEqual(repr(n), _removeWhitespace(cjson.encode(n)))
 
     def testReadTrue(self):
         self.assertEqual(True, cjson.decode("true"))
