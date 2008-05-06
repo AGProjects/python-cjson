@@ -318,47 +318,51 @@ decode_number(JSONData *jsondata)
 }
 
 
+typedef enum {
+    ArrayItem_or_ClosingBracket=0,
+    Comma_or_ClosingBracket,
+    ArrayItem,
+    ArrayDone
+} ArrayState;
+
 static PyObject*
 decode_array(JSONData *jsondata)
 {
     PyObject *object, *item;
-    int c, expect_item, items, result;
+    ArrayState next_state;
+    int c, result;
     char *start;
 
     object = PyList_New(0);
 
     start = jsondata->ptr;
     jsondata->ptr++;
-    expect_item = True;
-    items = 0;
-    while (True) {
+
+    next_state = ArrayItem_or_ClosingBracket;
+
+    while (next_state != ArrayDone) {
         skipSpaces(jsondata);
         c = *jsondata->ptr;
         if (c == 0) {
             PyErr_Format(JSON_DecodeError, "unterminated array starting at "
                          "position " SSIZE_T_F,
                          (Py_ssize_t)(start - jsondata->str));
-            goto failure;;
-        } else if (c == ']') {
-            if (expect_item && items>0) {
+            goto failure;
+        }
+        switch (next_state) {
+        case ArrayItem_or_ClosingBracket:
+            if (c == ']') {
+                jsondata->ptr++;
+                next_state = ArrayDone;
+                break;
+            }
+        case ArrayItem:
+            if (c==',' || c==']') {
                 PyErr_Format(JSON_DecodeError, "expecting array item at "
                              "position " SSIZE_T_F,
                              (Py_ssize_t)(jsondata->ptr - jsondata->str));
                 goto failure;
             }
-            jsondata->ptr++;
-            break;
-        } else if (c == ',') {
-            if (expect_item) {
-                PyErr_Format(JSON_DecodeError, "expecting array item at "
-                             "position " SSIZE_T_F,
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str));
-                goto failure;
-            }
-            expect_item = True;
-            jsondata->ptr++;
-            continue;
-        } else {
             item = decode_json(jsondata);
             if (item == NULL)
                 goto failure;
@@ -366,8 +370,25 @@ decode_array(JSONData *jsondata)
             Py_DECREF(item);
             if (result == -1)
                 goto failure;
-            expect_item = False;
-            items++;
+            next_state = Comma_or_ClosingBracket;
+            break;
+        case Comma_or_ClosingBracket:
+            if (c == ']') {
+                jsondata->ptr++;
+                next_state = ArrayDone;
+            } else if (c == ',') {
+                jsondata->ptr++;
+                next_state = ArrayItem;
+            } else {
+                PyErr_Format(JSON_DecodeError, "expecting ',' or ']' at "
+                             "position " SSIZE_T_F,
+                             (Py_ssize_t)(jsondata->ptr - jsondata->str));
+                goto failure;
+            }
+            break;
+        case ArrayDone:
+            // this will never be reached, but keep compilers happy
+            break;
         }
     }
 
@@ -379,21 +400,29 @@ failure:
 }
 
 
+typedef enum {
+    DictionaryKey_or_ClosingBrace=0,
+    Comma_or_ClosingBrace,
+    DictionaryKey,
+    DictionaryDone
+} DictionaryState;
+
 static PyObject*
 decode_object(JSONData *jsondata)
 {
     PyObject *object, *key, *value;
-    int c, expect_key, items, result;
+    DictionaryState next_state;
+    int c, result;
     char *start;
 
     object = PyDict_New();
 
-    expect_key = True;
-    items = 0;
     start = jsondata->ptr;
     jsondata->ptr++;
 
-    while (True) {
+    next_state = DictionaryKey_or_ClosingBrace;
+
+    while (next_state != DictionaryDone) {
         skipSpaces(jsondata);
         c = *jsondata->ptr;
         if (c == 0) {
@@ -401,29 +430,19 @@ decode_object(JSONData *jsondata)
                          "position " SSIZE_T_F,
                          (Py_ssize_t)(start - jsondata->str));
             goto failure;;
-        } else if (c == '}') {
-            if (expect_key && items>0) {
-                PyErr_Format(JSON_DecodeError, "expecting object property name"
-                             " at position " SSIZE_T_F,
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str));
-                goto failure;
+        }
+
+        switch (next_state) {
+        case DictionaryKey_or_ClosingBrace:
+            if (c == '}') {
+                jsondata->ptr++;
+                next_state = DictionaryDone;
+                break;
             }
-            jsondata->ptr++;
-            break;
-        } else if (c == ',') {
-            if (expect_key) {
-                PyErr_Format(JSON_DecodeError, "expecting object property name"
-                             "at position " SSIZE_T_F,
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str));
-                goto failure;
-            }
-            expect_key = True;
-            jsondata->ptr++;
-            continue;
-        } else {
+        case DictionaryKey:
             if (c != '"') {
-                PyErr_Format(JSON_DecodeError, "expecting property name in "
-                             "object at position " SSIZE_T_F,
+                PyErr_Format(JSON_DecodeError, "expecting object property name "
+                             "at position " SSIZE_T_F,
                              (Py_ssize_t)(jsondata->ptr - jsondata->str));
                 goto failure;
             }
@@ -443,6 +462,15 @@ decode_object(JSONData *jsondata)
                 jsondata->ptr++;
             }
 
+            skipSpaces(jsondata);
+            if (*jsondata->ptr==',' || *jsondata->ptr=='}') {
+                PyErr_Format(JSON_DecodeError, "expecting object property "
+                             "value at position " SSIZE_T_F,
+                             (Py_ssize_t)(jsondata->ptr - jsondata->str));
+                Py_DECREF(key);
+                goto failure;
+            }
+
             value = decode_json(jsondata);
             if (value == NULL) {
                 Py_DECREF(key);
@@ -454,8 +482,25 @@ decode_object(JSONData *jsondata)
             Py_DECREF(value);
             if (result == -1)
                 goto failure;
-            expect_key = False;
-            items++;
+            next_state = Comma_or_ClosingBrace;
+            break;
+        case Comma_or_ClosingBrace:
+            if (c == '}') {
+                jsondata->ptr++;
+                next_state = DictionaryDone;
+            } else if (c == ',') {
+                jsondata->ptr++;
+                next_state = DictionaryKey;
+            } else {
+                PyErr_Format(JSON_DecodeError, "expecting ',' or '}' at "
+                             "position " SSIZE_T_F,
+                             (Py_ssize_t)(jsondata->ptr - jsondata->str));
+                goto failure;
+            }
+            break;
+        case DictionaryDone:
+            // this will never be reached, but keep compilers happy
+            break;
         }
     }
 
