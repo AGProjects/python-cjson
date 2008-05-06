@@ -548,10 +548,9 @@ decode_json(JSONData *jsondata)
     case '-':
         if (*(jsondata->ptr+1) == 'I') {
             object = decode_inf(jsondata);
-        } else {
-            object = decode_number(jsondata);
+            break;
         }
-        break;
+        // fall through
     case '0':
     case '1':
     case '2':
