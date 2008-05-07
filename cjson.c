@@ -253,68 +253,71 @@ decode_nan(JSONData *jsondata)
 }
 
 
+#define skipDigits(ptr) while(isdigit(*(ptr))) (ptr)++
+
 static PyObject*
 decode_number(JSONData *jsondata)
 {
     PyObject *object, *str;
-    int c, is_float, should_stop;
+    int is_float;
     char *ptr;
 
-    // check if we got a floating point number
+    // validate number and check if it's floating point or not
     ptr = jsondata->ptr;
-    is_float = should_stop = False;
-    while (True) {
-        c = *ptr;
-        if (c == 0)
-            break;
-        switch(c) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-        case '-':
-        case '+':
-            break;
-        case '.':
-        case 'e':
-        case 'E':
-            is_float = True;
-            break;
-        default:
-            should_stop = True;
-        }
-        if (should_stop) {
-            break;
-        }
+    is_float = False;
+
+    if (*ptr == '-' || *ptr == '+')
         ptr++;
+
+    if (*ptr == '0') {
+        ptr++;
+        if (isdigit(*ptr))
+            goto number_error;
+    } else if (isdigit(*ptr))
+        skipDigits(ptr);
+    else
+        goto number_error;
+
+    if (*ptr == '.') {
+       is_float = True;
+       ptr++;
+       if (!isdigit(*ptr))
+           goto number_error;
+       skipDigits(ptr);
+    }
+
+    if (*ptr == 'e' || *ptr == 'E') {
+       is_float = True;
+       ptr++;
+       if (*ptr == '+' || *ptr == '-')
+           ptr++;
+       if (!isdigit(*ptr))
+           goto number_error;
+       skipDigits(ptr);
     }
 
     str = PyString_FromStringAndSize(jsondata->ptr, ptr - jsondata->ptr);
     if (str == NULL)
         return NULL;
 
-    if (is_float) {
+    if (is_float)
         object = PyFloat_FromString(str, NULL);
-    } else {
+    else
         object = PyInt_FromString(PyString_AS_STRING(str), NULL, 10);
-    }
 
     Py_DECREF(str);
 
-    if (object == NULL) {
-        PyErr_Format(JSON_DecodeError, "invalid number starting at position "
-                     SSIZE_T_F, (Py_ssize_t)(jsondata->ptr - jsondata->str));
-    } else {
-        jsondata->ptr = ptr;
-    }
+    if (object == NULL)
+        goto number_error;
+
+    jsondata->ptr = ptr;
 
     return object;
+
+number_error:
+    PyErr_Format(JSON_DecodeError, "invalid number starting at position "
+                 SSIZE_T_F, (Py_ssize_t)(jsondata->ptr - jsondata->str));
+    return NULL;
 }
 
 
