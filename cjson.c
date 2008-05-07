@@ -69,7 +69,7 @@ typedef int Py_ssize_t;
 #define Py_IS_NAN(X) ((X) != (X))
 #endif
 
-#define skipSpaces(d) while(*((d)->ptr) && isspace(*((d)->ptr))) (d)->ptr++
+#define skipSpaces(d) while(isspace(*((d)->ptr))) (d)->ptr++
 
 
 /* ------------------------------ Decoding ----------------------------- */
