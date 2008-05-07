@@ -1125,7 +1125,7 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
     }
 
     jsondata.ptr = jsondata.str;
-    jsondata.end = jsondata.str + strlen(jsondata.str);
+    jsondata.end = jsondata.str + PyString_GET_SIZE(str);
     jsondata.all_unicode = all_unicode;
 
     object = decode_json(&jsondata);
