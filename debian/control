@@ -3,15 +3,13 @@ Section: python
 Priority: optional
 Maintainer: Dan Pascu <dan@ag-projects.com>
 Uploaders: Saul Ibarra <saul@ag-projects.com>
-Build-Depends: cdbs (>= 0.4.47), debhelper (>= 5.0.42), python-all-dev (>= 2.4.4-1), python-central (>= 0.5.6)
-XS-Python-Version: all
+Build-Depends: debhelper (>= 7.3.5), python-all-dev (>= 2.5)
 Standards-Version: 3.9.2
 
 Package: python-cjson
 Architecture: any
-Depends: ${python:Depends}, ${shlibs:Depends}
+Depends: ${python:Depends}, ${misc:Depends}, ${shlibs:Depends}
 Provides: ${python:Provides}
-XB-Python-Version: ${python:Versions}
 Description: Very fast JSON encoder/decoder for Python
  This module provides a very fast implementation of a JSON encoder/decoder
  for the python language.
