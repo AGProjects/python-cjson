@@ -1,3 +1,15 @@
+python-cjson (1.0.5.1) unstable; urgency=low
+
+  * Use repr instead of str when encoding floats to preserve full preicision
+  * Fixed windows compilation problem introduced in 1.0.5
+  * Fixed float write test to work with latest high precision float encoding
+  * Fixed some list/dict decoding bugs. Use a state machine for decoding them.
+  * Improved decoding speed by using PyString_GET_SIZE instead of strlen
+  * Integrate modified 0001-fix-for-CVE-2010-1666 patch from Debian
+  * Reworked debian packaging
+
+ -- Saul Ibarra <saul@ag-projects.com>  Wed, 15 Jun 2011 13:23:55 +0200
+
 python-cjson (1.0.5) unstable; urgency=low
 
   * Check if module initialization failed.
