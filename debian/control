@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Dan Pascu <dan@ag-projects.com>
 Build-Depends: cdbs (>= 0.4.47), debhelper (>= 5.0.42), python-all-dev (>= 2.4.4-1), python-central (>= 0.5.6)
 XS-Python-Version: all
-Standards-Version: 3.7.2
+Standards-Version: 3.9.2
 
 Package: python-cjson
 Architecture: any
