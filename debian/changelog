@@ -1,4 +1,4 @@
-python-cjson (1.0.5.1) unstable; urgency=low
+python-cjson (1.1.0) unstable; urgency=low
 
   * Use repr instead of str when encoding floats to preserve full preicision
   * Fixed windows compilation problem introduced in 1.0.5
@@ -8,7 +8,7 @@ python-cjson (1.0.5.1) unstable; urgency=low
   * Integrate modified 0001-fix-for-CVE-2010-1666 patch from Debian
   * Reworked debian packaging
 
- -- Saul Ibarra <saul@ag-projects.com>  Wed, 15 Jun 2011 13:23:55 +0200
+ -- Dan Pascu <dan@ag-projects.com>  Tue, 24 Jun 2014 18:43:16 +0300
 
 python-cjson (1.0.5) unstable; urgency=low
 
