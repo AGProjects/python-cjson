@@ -116,12 +116,13 @@ static PyObject*
 decode_string(JSONData *jsondata)
 {
     PyObject *object;
-    int c, escaping, has_unicode, string_escape;
+    int c, escaping, has_unicode, string_escape, slash_unescape;
     Py_ssize_t len;
     char *ptr;
+    char *lptr;
 
     // look for the closing quote
-    escaping = has_unicode = string_escape = False;
+    escaping = has_unicode = string_escape = slash_unescape = False;
     ptr = jsondata->ptr + 1;
     while (True) {
         c = *ptr;
@@ -153,6 +154,9 @@ decode_string(JSONData *jsondata)
             case '\\':
                 string_escape = True;
                 break;
+            case '/':
+                slash_unescape = True;
+                break;
             }
             escaping = False;
         }
@@ -160,13 +164,40 @@ decode_string(JSONData *jsondata)
     }
 
     len = ptr - jsondata->ptr - 1;
+    lptr = jsondata->ptr+1;
+
+    if (slash_unescape && len < 16384) {
+        char *p = lptr = alloca(len+1);
+        char *wp = p;
+        lptr[len] = 0;
+        memcpy(lptr, jsondata->ptr+1, len);
+        while (*p && *p != '\\') {
+            p++;
+        }
+        wp = p;
+        while (*p) {
+            c = *p++;
+            if (c == '\\') {
+                switch (*p) {
+                case '/':
+                    break;
+                default:
+                    *wp++ = c;
+                }
+            } else {
+                *wp++ = c;
+            }
+        }
+        len = wp - lptr;
+        *wp = 0;
+    }
 
     if (has_unicode || jsondata->all_unicode)
-        object = PyUnicode_DecodeUnicodeEscape(jsondata->ptr+1, len, NULL);
+        object = PyUnicode_DecodeUnicodeEscape(lptr, len, NULL);
     else if (string_escape)
-        object = PyString_DecodeEscape(jsondata->ptr+1, len, NULL, 0, NULL);
+        object = PyString_DecodeEscape(lptr, len, NULL, 0, NULL);
     else
-        object = PyString_FromStringAndSize(jsondata->ptr+1, len);
+        object = PyString_FromStringAndSize(lptr, len);
 
     if (object == NULL) {
         PyObject *type, *value, *tb, *reason;
