@@ -17,6 +17,7 @@ typedef struct JSONData {
     char *end; // pointer to the string end
     char *ptr; // pointer to the current parsing position
     int  all_unicode; // make all output strings unicode if true
+    int  objdepth; // recursion depth counter
 } JSONData;
 
 static PyObject* encode_object(PyObject *object);
@@ -67,6 +68,10 @@ typedef int Py_ssize_t;
 
 #ifndef Py_IS_NAN
 #define Py_IS_NAN(X) ((X) != (X))
+#endif
+
+#ifndef CJSON_MAX_DEPTH
+#define CJSON_MAX_DEPTH 1024
 #endif
 
 #define skipSpaces(d) while(isspace(*((d)->ptr))) (d)->ptr++
@@ -340,6 +345,11 @@ decode_array(JSONData *jsondata)
 
     start = jsondata->ptr;
     jsondata->ptr++;
+    jsondata->objdepth++;
+    if (jsondata->objdepth > CJSON_MAX_DEPTH) {
+        PyErr_Format(JSON_DecodeError, "Reached object decoding depth limit");
+        goto failure;
+    }
 
     next_state = ArrayItem_or_ClosingBracket;
 
@@ -356,6 +366,7 @@ decode_array(JSONData *jsondata)
         case ArrayItem_or_ClosingBracket:
             if (c == ']') {
                 jsondata->ptr++;
+                jsondata->objdepth--;
                 next_state = ArrayDone;
                 break;
             }
@@ -422,6 +433,11 @@ decode_object(JSONData *jsondata)
 
     start = jsondata->ptr;
     jsondata->ptr++;
+    jsondata->objdepth++;
+    if (jsondata->objdepth > CJSON_MAX_DEPTH) {
+        PyErr_Format(JSON_DecodeError, "Reached object decoding depth limit");
+        goto failure;
+    }
 
     next_state = DictionaryKey_or_ClosingBrace;
 
@@ -439,6 +455,7 @@ decode_object(JSONData *jsondata)
         case DictionaryKey_or_ClosingBrace:
             if (c == '}') {
                 jsondata->ptr++;
+                jsondata->objdepth--;
                 next_state = DictionaryDone;
                 break;
             }
@@ -1137,6 +1154,7 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
     jsondata.ptr = jsondata.str;
     jsondata.end = jsondata.str + PyString_GET_SIZE(str);
     jsondata.all_unicode = all_unicode;
+    jsondata.objdepth = 0;
 
     object = decode_json(&jsondata);
 
