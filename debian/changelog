@@ -1,3 +1,17 @@
+python-cjson (1.2.0) unstable; urgency=medium
+
+  * Implemented recursion limit check for encoding/decoding arrays and objects
+  * Removed unnecessary .PHONY target
+  * Removed spurious whitespace
+  * Updated debian uploaders
+  * Increased debian compatibility level to 9
+  * Build depend on python >= 2.7 as older versions are not in debian anymore
+  * Updated debian standards version
+  * Removed no longer used pycompat file
+  * Updated copyright years and stripped licensing info from source code
+
+ -- Dan Pascu <dan@ag-projects.com>  Tue, 28 Feb 2017 15:19:08 +0200
+
 python-cjson (1.1.0) unstable; urgency=low
 
   * Use repr instead of str when encoding floats to preserve full preicision

@@ -1,3 +1,19 @@
+Changes in version 1.2.0
+------------------------
+
+  * Implemented recursion limit check for encoding/decoding arrays and objects
+  * Updated copyright years and stripped licensing info from source code
+
+Changes in version 1.1.0
+------------------------
+
+  * Use repr instead of str when encoding floats to preserve full preicision
+  * Fixed windows compilation problem introduced in 1.0.5
+  * Fixed float write test to work with latest high precision float encoding
+  * Fixed some list/dict decoding bugs. Use a state machine for decoding them.
+  * Improved decoding speed by using PyString_GET_SIZE instead of strlen
+  * Integrate modified 0001-fix-for-CVE-2010-1666 patch from Debian
+
 Changes in version 1.0.5
 ------------------------
 
