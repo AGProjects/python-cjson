@@ -1,3 +1,9 @@
+python-cjson (1.2.1) unstable; urgency=medium
+
+  * Updated project homepage
+
+ -- Dan Pascu <dan@ag-projects.com>  Tue, 28 Feb 2017 15:32:03 +0200
+
 python-cjson (1.2.0) unstable; urgency=medium
 
   * Implemented recursion limit check for encoding/decoding arrays and objects
