@@ -1,10 +1,6 @@
-/*
- * Copyright (C) 2006-2007 Dan Pascu. See LICENSE for details.
- * Author: Dan Pascu <dan@ag-projects.com>
- *
- * Fast JSON encoder/decoder implementation for Python
- *
- */
+
+// Fast JSON encoder/decoder implementation for Python
+//
 
 #include <Python.h>
 #include <stddef.h>
