@@ -1,0 +1,16 @@
+language: python
+sudo: false
+
+python:
+  - 2.7
+  - 3.6
+  - pypy
+  - pypy3
+
+install:
+  - pip install --upgrade pip setuptools
+  - pip install .
+
+script:
+  - build_inplace
+  - jsontest.py
