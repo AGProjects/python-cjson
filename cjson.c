@@ -749,7 +749,7 @@ encode_unicode(PyObject *unicode)
             unsigned short ucs1, ucs2;
             ucs1 = ((ch >> 10) & 0x03FF) + 0xD800;
             ucs2 = (ch & 0x03FF) + 0xDC00;
-            
+
             *p++ = '\\';
             *p++ = 'u';
             *p++ = hexdigit[(ucs1 >> 12) & 0x000F];
