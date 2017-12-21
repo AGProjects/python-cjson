@@ -747,8 +747,8 @@ encode_unicode(PyObject *unicode)
         /* Map 21-bit characters to UTF-16 surrogate pairs */
         else if (ch >= 0x10000) {
             unsigned short ucs1, ucs2;
-            ucs1 = ((ch >> 10) & 0x03FF) + 0xD800;
-            ucs2 = (ch & 0x03FF) + 0xDC00;
+            ucs1 = (unsigned short)(((ch - 0x10000) >> 10) & 0x03FF) + 0xD800;
+            ucs2 = (unsigned short)((ch - 0x10000) & 0x03FF) + 0xDC00;
 
             *p++ = '\\';
             *p++ = 'u';

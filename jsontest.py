@@ -325,9 +325,11 @@ class JsonTest(unittest.TestCase):
         # narrow-but-escaped characters prevents string resizing.
         # Note that u'\U0001D11E\u1234' also breaks, but sometimes goes
         # undetected.
+        # In any case, in ECMA-404, only utf-16 surrogate pairs are
+        # valid, so \U0001D11E should be encoded as \ud834\udd1e
         s = cjson.encode(u'\U0001D11E\U0001D11E\U0001D11E\U0001D11E'
                          u'\u1234\u1234\u1234\u1234\u1234\u1234')
-        self.assertEqual(r'"\U0001d11e\U0001d11e\U0001d11e\U0001d11e'
+        self.assertEqual(r'"\ud834\udd1e\ud834\udd1e\ud834\udd1e\ud834\udd1e'
                          r'\u1234\u1234\u1234\u1234\u1234\u1234"', s)
         
 def main():
