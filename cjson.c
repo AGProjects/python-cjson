@@ -666,7 +666,7 @@ encode_unicode(PyObject *unicode)
 
     static const char *hexdigit = "0123456789abcdef";
 #ifdef Py_UNICODE_WIDE
-    const Py_ssize_t expandsize = 10;
+    const Py_ssize_t expandsize = 12;
 #else
     const Py_ssize_t expandsize = 6;
 #endif
@@ -713,46 +713,27 @@ encode_unicode(PyObject *unicode)
         }
 
 #ifdef Py_UNICODE_WIDE
-        /* Map 21-bit characters to '\U00xxxxxx' */
+        /* Map 21-bit characters to UTF-16 surrogate pairs */
         else if (ch >= 0x10000) {
+            unsigned short ucs1, ucs2;
+            ucs1 = (unsigned short)(((ch - 0x10000) >> 10) & 0x03FF) + 0xD800;
+            ucs2 = (unsigned short)((ch - 0x10000) & 0x03FF) + 0xDC00;
+
             *p++ = '\\';
-            *p++ = 'U';
-            *p++ = hexdigit[(ch >> 28) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 24) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 20) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 16) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 12) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 8) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 4) & 0x0000000F];
-            *p++ = hexdigit[ch & 0x0000000F];
+            *p++ = 'u';
+            *p++ = hexdigit[(ucs1 >> 12) & 0x000F];
+            *p++ = hexdigit[(ucs1 >> 8) & 0x000F];
+            *p++ = hexdigit[(ucs1 >> 4) & 0x000F];
+            *p++ = hexdigit[ucs1 & 0x000F];
+            *p++ = '\\';
+            *p++ = 'u';
+            *p++ = hexdigit[(ucs2 >> 12) & 0x000F];
+            *p++ = hexdigit[(ucs2 >> 8) & 0x000F];
+            *p++ = hexdigit[(ucs2 >> 4) & 0x000F];
+            *p++ = hexdigit[ucs2 & 0x000F];
             continue;
         }
 #endif
-        /* Map UTF-16 surrogate pairs to Unicode \UXXXXXXXX escapes */
-        else if (ch >= 0xD800 && ch < 0xDC00) {
-            Py_UNICODE ch2;
-            Py_UCS4 ucs;
-
-            ch2 = *s++;
-            size--;
-            if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
-                ucs = (((ch & 0x03FF) << 10) | (ch2 & 0x03FF)) + 0x00010000;
-                *p++ = '\\';
-                *p++ = 'U';
-                *p++ = hexdigit[(ucs >> 28) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 24) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 20) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 16) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 12) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 8) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 4) & 0x0000000F];
-                *p++ = hexdigit[ucs & 0x0000000F];
-                continue;
-            }
-            /* Fall through: isolated surrogates are copied as-is */
-            s--;
-            size++;
-        }
 
         /* Map 16-bit characters to '\uxxxx' */
         if (ch >= 256) {
