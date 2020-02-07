@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 ## this test suite is an almost verbatim copy of the jsontest.py test suite
 ## found in json-py available from http://sourceforge.net/projects/json-py/
