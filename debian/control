@@ -3,7 +3,7 @@ Section: python
 Priority: optional
 Maintainer: Dan Pascu <dan@ag-projects.com>
 Build-Depends: debhelper (>= 11), python-all-dev
-Standards-Version: 3.9.8
+Standards-Version: 4.5.0
 
 Package: python-cjson
 Architecture: any
