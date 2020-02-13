@@ -2,7 +2,7 @@ Source: python-cjson
 Section: python
 Priority: optional
 Maintainer: Dan Pascu <dan@ag-projects.com>
-Build-Depends: debhelper (>= 11), python-all-dev
+Build-Depends: debhelper (>= 11), dh-python, python-all-dev
 Standards-Version: 4.5.0
 
 Package: python-cjson
