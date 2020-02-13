@@ -1,3 +1,23 @@
+python-cjson (1.2.2) unstable; urgency=medium
+
+  * Fix encoding of UTF-16 surrogate pairs
+  * Increased debian compatibility level to 11 and updated dependencies
+  * Use pybuild for the debian build system
+  * Install README in the docs for the debian package
+  * Made MANIFEST.in more explicit
+  * Refactored setup.py to be PEP-8 compliant
+  * Pass command line arguments from build_inplace to setup.py
+  * Updated boring file
+  * Cleanup after build_inplace
+  * Removed commented out variable in debian rules
+  * Explicitly use python2 in shebang lines
+  * Increased debian standards version to 4.5.0
+  * Added dh-python to Build-Depends
+  * Updated copyright years
+  * Updated license
+
+ -- Dan Pascu <dan@ag-projects.com>  Thu, 13 Feb 2020 17:48:16 +0200
+
 python-cjson (1.2.1) unstable; urgency=medium
 
   * Updated project homepage

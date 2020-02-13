@@ -1,3 +1,14 @@
+Changes in version 1.2.2
+------------------------
+
+  * Fix encoding of UTF-16 surrogate pairs
+  * Made MANIFEST.in more explicit
+  * Refactored setup.py to be PEP-8 compliant
+  * Pass command line arguments from build_inplace to setup.py
+  * Cleanup after build_inplace
+  * Explicitly use python2 in shebang lines
+  * Updated license
+
 Changes in version 1.2.1
 ------------------------
 
