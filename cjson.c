@@ -1099,8 +1099,10 @@ encode_object(PyObject *object, PyObject *fallback)
         Py_LeaveRecursiveCall();
         return result;
     } else {
+        PyObject *repr = PyObject_Repr(object);
         PyErr_Format(JSON_EncodeError, "object %s is not JSON encodable",
-	    PyObject_Repr(object));
+            PyString_AsString(repr));
+        Py_DECREF(repr);
         return NULL;
     }
 }

@@ -340,6 +340,8 @@ class JsonTest(unittest.TestCase):
             if isinstance(obj, Decimal):
                 return float(obj)
             raise cjson.EncodeError(obj)
+        with self.assertRaises(cjson.EncodeError):
+            cjson.encode(Decimal(1.23))
         self.assertEqual(cjson.encode(Decimal(1.23), fallback), '1.23')
         with self.assertRaises(cjson.EncodeError):
             cjson.encode(datetime.now(), fallback)
