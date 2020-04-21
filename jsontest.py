@@ -20,6 +20,9 @@
 ## License along with this library; if not, write to the Free Software
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from datetime import datetime
+from decimal import Decimal
+
 import unittest
 
 import cjson
@@ -141,7 +144,7 @@ class JsonTest(unittest.TestCase):
 
     def doReadBadArray(self):
         cjson.decode('[1,2,3,,]')
-        
+
     def testReadBadObjectSyntax(self):
         self.assertRaises(_exception, self.doReadBadObjectSyntax)
 
@@ -159,7 +162,7 @@ class JsonTest(unittest.TestCase):
     def testReadNegativeIntegerValue(self):
         obj = cjson.decode('{ "key" : -44 }')
         self.assertEqual({ "key" : -44 }, obj)
-        
+
     def testReadFloatValue(self):
         obj = cjson.decode('{ "age" : 44.5 }')
         self.assertEqual({ "age" : 44.5 }, obj)
@@ -176,7 +179,7 @@ class JsonTest(unittest.TestCase):
 
     def testReadSmallObject(self):
         obj = cjson.decode('{ "name" : "Patrick", "age":44} ')
-        self.assertEqual({ "age" : 44, "name" : "Patrick" }, obj)        
+        self.assertEqual({ "age" : 44, "name" : "Patrick" }, obj)
 
     def testReadEmptyArray(self):
         obj = cjson.decode('[]')
@@ -331,7 +334,16 @@ class JsonTest(unittest.TestCase):
                          u'\u1234\u1234\u1234\u1234\u1234\u1234')
         self.assertEqual(r'"\ud834\udd1e\ud834\udd1e\ud834\udd1e\ud834\udd1e'
                          r'\u1234\u1234\u1234\u1234\u1234\u1234"', s)
-        
+
+    def testWriteCustomObject(self):
+        def fallback(obj):
+            if isinstance(obj, Decimal):
+                return float(obj)
+            raise cjson.EncodeError(obj)
+        self.assertEqual(cjson.encode(Decimal(1.23), fallback), '1.23')
+        with self.assertRaises(cjson.EncodeError):
+            cjson.encode(datetime.now(), fallback)
+
 def main():
     unittest.main()
 

@@ -15,12 +15,12 @@ typedef struct JSONData {
     int  all_unicode; // make all output strings unicode if true
 } JSONData;
 
-static PyObject* encode_object(PyObject *object);
+static PyObject* encode_object(PyObject *object, PyObject *fallback);
 static PyObject* encode_string(PyObject *object);
 static PyObject* encode_unicode(PyObject *object);
-static PyObject* encode_tuple(PyObject *object);
-static PyObject* encode_list(PyObject *object);
-static PyObject* encode_dict(PyObject *object);
+static PyObject* encode_tuple(PyObject *object, PyObject *fallback);
+static PyObject* encode_list(PyObject *object, PyObject *fallback);
+static PyObject* encode_dict(PyObject *object, PyObject *fallback);
 
 static PyObject* decode_json(JSONData *jsondata);
 static PyObject* decode_null(JSONData *jsondata);
@@ -799,7 +799,7 @@ encode_unicode(PyObject *unicode)
  */
 
 static PyObject*
-encode_tuple(PyObject *tuple)
+encode_tuple(PyObject *tuple, PyObject *fallback)
 {
     Py_ssize_t i, n;
     PyObject *s, *temp;
@@ -816,7 +816,7 @@ encode_tuple(PyObject *tuple)
 
     /* Do repr() on each element. */
     for (i = 0; i < n; ++i) {
-        s = encode_object(v->ob_item[i]);
+        s = encode_object(v->ob_item[i], fallback);
         if (s == NULL)
             goto Done;
         PyTuple_SET_ITEM(pieces, i, s);
@@ -864,7 +864,7 @@ Done:
  *   represented in JSON.
  */
 static PyObject*
-encode_list(PyObject *list)
+encode_list(PyObject *list, PyObject *fallback)
 {
     Py_ssize_t i;
     PyObject *s, *temp;
@@ -893,7 +893,7 @@ encode_list(PyObject *list)
      * so must refetch the list size on each iteration. */
     for (i = 0; i < v->ob_size; ++i) {
         int status;
-        s = encode_object(v->ob_item[i]);
+        s = encode_object(v->ob_item[i], fallback);
         if (s == NULL)
             goto Done;
         status = PyList_Append(pieces, s);
@@ -947,7 +947,7 @@ Done:
  *   be represented in JSON.
  */
 static PyObject*
-encode_dict(PyObject *dict)
+encode_dict(PyObject *dict, PyObject *fallback)
 {
     Py_ssize_t i;
     PyObject *s, *temp, *colon = NULL;
@@ -991,9 +991,9 @@ encode_dict(PyObject *dict)
 
         /* Prevent repr from deleting value during key format. */
         Py_INCREF(value);
-        s = encode_object(key);
+        s = encode_object(key, fallback);
         PyString_Concat(&s, colon);
-        PyString_ConcatAndDel(&s, encode_object(value));
+        PyString_ConcatAndDel(&s, encode_object(value, fallback));
         Py_DECREF(value);
         if (s == NULL)
             goto Done;
@@ -1039,7 +1039,7 @@ Done:
 
 
 static PyObject*
-encode_object(PyObject *object)
+encode_object(PyObject *object, PyObject *fallback)
 {
     if (object == Py_True) {
         return PyString_FromString("true");
@@ -1070,25 +1070,37 @@ encode_object(PyObject *object)
         PyObject *result;
         if (Py_EnterRecursiveCall(" while encoding a JSON array from a Python list"))
             return NULL;
-        result = encode_list(object);
+        result = encode_list(object, fallback);
         Py_LeaveRecursiveCall();
         return result;
     } else if (PyTuple_Check(object)) {
         PyObject *result;
         if (Py_EnterRecursiveCall(" while encoding a JSON array from a Python tuple"))
             return NULL;
-        result = encode_tuple(object);
+        result = encode_tuple(object, fallback);
         Py_LeaveRecursiveCall();
         return result;
     } else if (PyDict_Check(object)) { // use PyMapping_Check(object) instead? -Dan
         PyObject *result;
         if (Py_EnterRecursiveCall(" while encoding a JSON object"))
             return NULL;
-        result = encode_dict(object);
+        result = encode_dict(object, fallback);
+        Py_LeaveRecursiveCall();
+        return result;
+    } else if (fallback) {
+        PyObject *args, *resolve, *result;
+        if (Py_EnterRecursiveCall(" while encoding a non-primitive Python object"))
+            return NULL;
+        args = PyTuple_Pack(1, object);
+        resolve = PyObject_CallObject(fallback, args);
+        Py_DECREF(args);
+        result = PyErr_Occurred() ? NULL : encode_object(resolve, fallback);
+        Py_XDECREF(resolve);
         Py_LeaveRecursiveCall();
         return result;
     } else {
-        PyErr_SetString(JSON_EncodeError, "object is not JSON encodable");
+        PyErr_Format(JSON_EncodeError, "object %s is not JSON encodable",
+	    PyObject_Repr(object));
         return NULL;
     }
 }
@@ -1097,9 +1109,21 @@ encode_object(PyObject *object)
 /* Encode object into its JSON representation */
 
 static PyObject*
-JSON_encode(PyObject *self, PyObject *object)
+JSON_encode(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-    return encode_object(object);
+    static char *kwlist[] = {"obj", "default", NULL};
+    PyObject *object, *fallback = NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O:decode",
+        kwlist, &object, &fallback
+    )) return NULL;
+    if (fallback && PyObject_Not(fallback)) fallback = NULL;
+    if (fallback && !PyCallable_Check(fallback)) {
+        PyErr_Format(PyExc_ValueError,
+            "The 'default' argument %s is not callable",
+            PyObject_Repr(fallback));
+        return NULL;
+    };
+    return encode_object(object, fallback);
 }
 
 
@@ -1159,8 +1183,11 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
 /* List of functions defined in the module */
 
 static PyMethodDef cjson_methods[] = {
-    {"encode", (PyCFunction)JSON_encode,  METH_O,
-    PyDoc_STR("encode(object) -> generate the JSON representation for object.")},
+    {"encode", (PyCFunction)JSON_encode,  METH_VARARGS|METH_KEYWORDS,
+    PyDoc_STR("encode(object, default=Null) -> generate the JSON representation for object.\n"
+              "The optional argument `default' is function that gets called for objects\n"
+              "that can’t otherwise be serialized. It should return a JSON encodable\n"
+              "version of the object or raise cjson.EncodeError.")},
 
     {"decode", (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
     PyDoc_STR("decode(string, all_unicode=False) -> parse the JSON representation into\n"
